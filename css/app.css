@@ -82,15 +82,28 @@ button[type="submit"], .btn {
     color: white;
     cursor: pointer;
 }
+a.btn {
+    margin-left: .3em;
+    margin-right: .3em;
+}
+.btn-danger {
+    background-color: indianred;
+    color: white;
+}
+.btn-danger:hover {
+    background-color: darkred;
+}
 h1 .btn {
     font-size: .6em;
 }
 
-a.btn:hover {
+.btn:hover {
     color: white;
     background-color: cornflowerblue;
 }
-
+.btn-danger:hover {
+    background-color: darkred;
+}
 .comments-box {
     padding-left: 20px;
 }

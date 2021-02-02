@@ -93,4 +93,16 @@ class Model
     public function createdAt() : \DateTime {
         return \DateTime::createFromFormat('Y-m-d H:i:s', $this->created_at);
     }
+
+    public function delete(): bool
+    {
+        if(!isset($this->id)) {
+            return false;
+        }
+
+        $stmt = DB::instance()->prepare("DELETE FROM {$this->table} WHERE ID=? LIMIT 1");
+        $stmt->bind_param('s', $this->id);
+
+        return (bool) $stmt->execute();
+    }
 }

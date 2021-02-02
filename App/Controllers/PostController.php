@@ -33,4 +33,17 @@ class PostController extends Controller
             header("Location: /post/create");
         }
     }
+
+    public function edit() {
+        $this->set('post', Post::find($_GET['post']));
+
+        $this->render('create');
+    }
+
+    public function delete() {
+        $post = Post::find($_GET['post']);
+        $post->delete();
+
+        header("Location: /home");
+    }
 }
