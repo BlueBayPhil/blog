@@ -21,4 +21,9 @@ class HomeController extends Controller
 
         $this->render();
     }
+
+    public function show404() {
+        $this->view = '404';
+        $this->render();
+    }
 }

@@ -4,6 +4,8 @@
 namespace App;
 
 
+use App\Controllers\HomeController;
+
 class App
 {
     private static ?App $app = null;
@@ -32,7 +34,7 @@ class App
 
         $uri = array_merge([], $uri);
 
-        for($i = 0; $i < count($uri); $i++) {
+        for ($i = 0; $i < count($uri); $i++) {
             $uri[$i] = $this->stripQueryString($uri[$i]);
         }
 
@@ -46,19 +48,34 @@ class App
             $view = isset($uri[1]) && strlen($uri[1]) > 0 ? $uri[1] : 'index';
         }
 
+        if (!file_exists(dirname(__DIR__) . '/' . str_replace('\\', '/', $controller) . '.php')) {
+            $this->show404();
+        }
+
         unset($uri[0]);
         unset($uri[1]);
 
-        $c = new $controller();
 
-        call_user_func_array([$c, $view], $uri);
+        $c = new $controller();
+        if (false == method_exists($c, $view)) {
+            $this->show404();
+        } else {
+            call_user_func_array([$c, $view], $uri);
+        }
     }
 
-    private function stripQueryString($var) : string
+    private function stripQueryString($var): string
     {
-        if(strstr($var, '?')) {
+        if (strstr($var, '?')) {
             $var = substr($var, 0, strrpos($var, '?'));
         }
         return $var;
+    }
+
+    private function show404()
+    {
+        $c = new HomeController();
+        $c->show404();
+        exit();
     }
 }
