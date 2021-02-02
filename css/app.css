@@ -140,3 +140,7 @@ h1 .btn {
     display: block;
     clear: both;
 }
+
+.text-muted {
+    color: darkgrey;
+}

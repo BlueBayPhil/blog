@@ -97,12 +97,12 @@ class Model
 
         $data = get_object_vars($this);
         // Remove the table name from data props.
-        unset($data['table']);
+        unset($data['table'], $data['created_at']);
 
         if (!is_null($this->id)) {
             // Update an existing model.
             // Remove the id and created_at fields so we dont update them.
-            unset($data['id'], $data['created_at']);
+            unset($data['id']);
             $update_fields = implode(',', array_map(function ($k) {
                 return sprintf("%s=?", $k);
             }, array_keys($data)));

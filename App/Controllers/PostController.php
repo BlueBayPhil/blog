@@ -41,6 +41,9 @@ class PostController extends Controller
      * Processes the request to store a post
      */
     public function store() {
+        if(strlen($_POST['id']) < 1) {
+            unset($_POST['id']);
+        }
         $post = new post($_POST);
 
         try {

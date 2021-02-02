@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col col-9">
         <h1><?=$post->title;?> <div class="float-right"><a href="/post/edit?post=<?=$post->id;?>" class="btn">Edit</a><a href="/post/delete?post=<?=$post->id;?>" class="btn btn-danger">Delete</a></div></h1>
+        <h4 class="text-muted">Written <?=$post->createdAt()->format('jS F Y H:i');?></h4>
         <article>
             <?=nl2br($post->content);?>
         </article>
