@@ -8,6 +8,10 @@ use App\Models\Comment;
 
 class CommentController extends Controller
 {
+
+    /**
+     * Processes a request to store a new comment
+     */
     public function store() {
         $data = $_POST;
         $data['post_id'] = $data['post'];

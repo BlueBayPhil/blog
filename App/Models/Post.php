@@ -8,14 +8,17 @@ use App\Database\DB;
 
 class Post extends Model
 {
-    public $id;
-    public $title;
-    public $description;
-    public $content;
-    public $created_at;
+    public string $title;
+    public string $description;
+    public string $content;
+    public string $created_at;
 
-    protected $table = 'posts';
+    protected string $table = 'posts';
 
+    /**
+     * Validate the provided data
+     * @return bool
+     */
     public function validate(): bool
     {
         if (strlen($this->title) > 100) return false;
@@ -24,7 +27,11 @@ class Post extends Model
         return true;
     }
 
-    public function comments()
+    /**
+     * Get all the Comment objects for this post
+     * @return array
+     */
+    public function comments() : array
     {
         $return = [];
         $stmt = DB::instance()->prepare("SELECT * FROM comments WHERE post_id=?");
@@ -41,6 +48,10 @@ class Post extends Model
         return $return;
     }
 
+    /**
+     * Delete the resource. Overridden parent method to delete related comments
+     * @return bool
+     */
     public function delete(): bool
     {
         $comments = $this->comments();

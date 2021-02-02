@@ -3,20 +3,30 @@
 namespace App\Models;
 
 use App\Database\DB;
+use DateTime;
+use ValidationException;
 
 class Model
 {
-    public $id;
-    public $created_at;
+    public int $id;
+    public string $created_at;
 
-    protected $table = '';
+    /**
+     * Optionally override the table used in queries
+     * @var string
+     */
+    protected string $table = '';
 
+    /**
+     * Model constructor.
+     * @param array $attributes
+     */
     public function __construct(array $attributes = [])
     {
         foreach ($attributes as $key => $value) $this->{$key} = $value;
 
         if (empty($this->table)) {
-            // attempt to figure out what the table name should be
+            // Attempt to figure out what the table we should use is called.
             $className = get_class($this);
             $this->table = strtolower(substr($className, strrpos($className, '\\') + 1));
             // Check for plural naming convention
@@ -26,6 +36,11 @@ class Model
         }
     }
 
+    /**
+     * Find a new resource
+     * @param $id
+     * @return static
+     */
     public static function find($id)
     {
         $result = DB::instance()->query("SELECT * FROM posts WHERE id='$id' LIMIT 1");
@@ -35,6 +50,10 @@ class Model
         }
     }
 
+    /**
+     * Find all objects from the database
+     * @return array
+     */
     public static function all(): array
     {
         $result = DB::instance()->query("SELECT * FROM posts");
@@ -47,25 +66,38 @@ class Model
         return $output;
     }
 
+    /**
+     * Validate the submitted data
+     * @virtual
+     * @return bool
+     */
     public function validate(): bool
     {
         return true;
     }
 
-    public function save($attributes = [])
+    /**
+     * Save the object to the database
+     * @param array $attributes
+     * @return bool
+     * @throws ValidationException
+     */
+    public function save($attributes = []): bool
     {
         if (empty($this->table)) {
             die("Table not specified for model " . get_class($this));
         }
         if (!$this->validate()) {
-            throw new \ValidationException();
+            throw new ValidationException();
         }
 
         $data = get_object_vars($this);
+        // Remove the table name from data props.
         unset($data['table']);
 
         if (!is_null($this->id)) {
             // Update an existing model.
+            // Remove the id and created_at fields so we dont update them.
             unset($data['id'], $data['created_at']);
             $update_fields = implode(',', array_map(function ($k) {
                 return sprintf("%s=?", $k);
@@ -92,16 +124,23 @@ class Model
             $this->id = $stmt->insert_id;
             return true;
         } else {
-            die($stmt->error);
             return false;
         }
     }
 
-    public function createdAt(): \DateTime
+    /**
+     * Get the created_at property as a DateTime object
+     * @return DateTime
+     */
+    public function createdAt(): DateTime
     {
-        return \DateTime::createFromFormat('Y-m-d H:i:s', $this->created_at);
+        return DateTime::createFromFormat('Y-m-d H:i:s', $this->created_at);
     }
 
+    /**
+     * Delete the object from the database
+     * @return bool
+     */
     public function delete(): bool
     {
         if (!isset($this->id)) {

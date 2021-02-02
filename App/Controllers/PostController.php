@@ -8,8 +8,11 @@ use App\Models\Post;
 
 class PostController extends Controller
 {
-    protected $view = 'post';
+    protected string $view = 'post';
 
+    /**
+     * Displays a specific post
+     */
     public function index() {
         $post = Post::find($_GET['id']);
 
@@ -18,12 +21,18 @@ class PostController extends Controller
         $this->render();
     }
 
+    /**
+     * Displays the editor view for creating a new post
+     */
     public function create() {
         $this->view = 'editor';
         $this->set('form_action', '/post/store');
         $this->render();
     }
 
+    /**
+     * Processes the request to store a post
+     */
     public function store() {
         $post = new post($_POST);
 
@@ -36,6 +45,9 @@ class PostController extends Controller
         }
     }
 
+    /**
+     * Displays the editor view for editing an existing post
+     */
     public function edit() {
         $this->set('post', Post::find($_GET['post']));
         $this->set('form_action', '/post/store');
@@ -44,6 +56,9 @@ class PostController extends Controller
         $this->render('create');
     }
 
+    /**
+     * Processes the request to delete a post
+     */
     public function delete() {
         $post = Post::find($_GET['post']);
         $post->delete();
