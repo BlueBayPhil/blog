@@ -14,6 +14,10 @@ class App
     {
     }
 
+    /**
+     * Create singleton instance
+     * @return App
+     */
     public static function instance(): App
     {
         if (null == App::$app) {
@@ -23,6 +27,9 @@ class App
         return App::$app;
     }
 
+    /**
+     * Bootstrap and run the app
+     */
     public function run()
     {
         $uri = explode('/', $_SERVER['REQUEST_URI']);
@@ -64,6 +71,11 @@ class App
         }
     }
 
+    /**
+     * Remove query string from a uri
+     * @param $var
+     * @return string
+     */
     private function stripQueryString($var): string
     {
         if (strstr($var, '?')) {
@@ -72,6 +84,9 @@ class App
         return $var;
     }
 
+    /**
+     * Show the 404 page
+     */
     private function show404()
     {
         $c = new HomeController();
