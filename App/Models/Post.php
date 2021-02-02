@@ -11,7 +11,6 @@ class Post extends Model
     public string $title;
     public string $description;
     public string $content;
-    public string $created_at;
 
     protected string $table = 'posts';
 

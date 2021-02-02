@@ -3,7 +3,7 @@
 namespace App\Exceptions;
 use \Exception;
 
-class ValidationException extends Exception
+class ModelNotFoundException extends Exception
 {
 
 }

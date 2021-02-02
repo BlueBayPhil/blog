@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Database\DB;
 use DateTime;
-use ValidationException;
+use App\Exceptions\ModelNotFoundException;
+use App\Exceptions\ValidationException;
 
 class Model
 {
-    public int $id;
-    public string $created_at;
+    public $id;
+    public $created_at;
 
     /**
      * Optionally override the table used in queries
@@ -40,13 +41,16 @@ class Model
      * Find a new resource
      * @param $id
      * @return static
+     * @throws ModelNotFoundException
      */
-    public static function find($id)
+    public static function find($id): Model
     {
         $result = DB::instance()->query("SELECT * FROM posts WHERE id='$id' LIMIT 1");
 
         if ($result->num_rows == 1) {
             return new static($result->fetch_assoc());
+        } else {
+            throw new ModelNotFoundException();
         }
     }
 

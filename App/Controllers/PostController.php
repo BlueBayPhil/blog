@@ -4,6 +4,7 @@
 namespace App\Controllers;
 
 
+use App\Exceptions\ModelNotFoundException;
 use App\Models\Post;
 
 class PostController extends Controller
@@ -14,11 +15,17 @@ class PostController extends Controller
      * Displays a specific post
      */
     public function index() {
-        $post = Post::find($_GET['id']);
+        try {
+            $post = Post::find($_GET['id']);
 
-        $this->set('post', $post);
+            $this->set('post', $post);
 
-        $this->render();
+            $this->render();
+        } catch(ModelNotFoundException $e) {
+            $this->view = '404';
+            $this->render();
+        }
+
     }
 
     /**
@@ -49,19 +56,30 @@ class PostController extends Controller
      * Displays the editor view for editing an existing post
      */
     public function edit() {
-        $this->set('post', Post::find($_GET['post']));
-        $this->set('form_action', '/post/store');
-        $this->view = 'editor';
+        try {
+            $this->set('post', Post::find($_GET['post']));
+            $this->set('form_action', '/post/store');
+            $this->view = 'editor';
 
-        $this->render('create');
+            $this->render('create');
+        } catch(ModelNotFoundException $e) {
+            $this->view = '404';
+            $this->render();
+        }
+
     }
 
     /**
      * Processes the request to delete a post
      */
     public function delete() {
-        $post = Post::find($_GET['post']);
-        $post->delete();
+        try {
+            $post = Post::find($_GET['post']);
+            $post->delete();
+        } catch(ModelNotFoundException $e) {
+            // Dont really care.
+        }
+
 
         header("Location: /home");
     }
