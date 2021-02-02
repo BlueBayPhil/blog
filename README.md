@@ -5,7 +5,9 @@ Allows creation of blog posts as well as commenting on created posts.
 
 ## To Run
 1. Clone repository
-2. either setup a virtual host with the DocumentRoot set as the root of this repo OR use PHP's built in webserver - php -S localhost:8080
+2. Import database.sql into your MySQL database host
+3. Set connection details for database in the top of Database/DB.php
+4. either setup a virtual host with the DocumentRoot set as the root of this repo OR use PHP's built in webserver - php -S localhost:8080
 
 ## Routing
 Routing is taken care of within the App class' run method. Routes comprise of a controller and a view.
