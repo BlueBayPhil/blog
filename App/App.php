@@ -36,7 +36,7 @@ class App
             $uri[$i] = $this->stripQueryString($uri[$i]);
         }
 
-        var_dump($uri);
+        // var_dump($uri);
 
         if (strlen($uri[0]) < 1) {
             $controller = 'App\\Controllers\\HomeController';

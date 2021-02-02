@@ -60,49 +60,57 @@ class Model
         if (!$this->validate()) {
             throw new \ValidationException();
         }
+
+        $data = get_object_vars($this);
+        unset($data['table']);
+
         if (!is_null($this->id)) {
-            // update existing model
-            // TODO
+            // Update an existing model.
+            unset($data['id'], $data['created_at']);
+            $update_fields = implode(',', array_map(function ($k) {
+                return sprintf("%s=?", $k);
+            }, array_keys($data)));
+
+            $stmt = DB::instance()->prepare("UPDATE {$this->table} SET {$update_fields} WHERE id=? LIMIT 1");
+            $stmt->bind_param('ssss', ...array_merge(array_values($data), [$this->id]));
         } else {
-            // create new model
-            $data = get_object_vars($this);
-            unset($data['table']);
+            // Create a new model.
             $fields = implode(',', array_keys($data));
             $field_placeholders = implode(',', array_map(function () {
                 return '?';
             }, $data));
 
             $stmt = DB::instance()->prepare("INSERT INTO {$this->table}($fields) VALUES($field_placeholders)");
-
-            if (!$stmt) {
-                die(DB::instance()->error);
-            }
-
             $stmt->bind_param(str_replace(['?', ','], ['s', ''], $field_placeholders), ...array_values($data));
+        }
 
-            if ($stmt->execute()) {
-                $this->id = $stmt->insert_id;
-                return true;
-            } else {
-                die($stmt->error);
-                return false;
-            }
+        if (!$stmt) {
+            die(DB::instance()->error);
+        }
+
+        if ($stmt->execute()) {
+            $this->id = $stmt->insert_id;
+            return true;
+        } else {
+            die($stmt->error);
+            return false;
         }
     }
 
-    public function createdAt() : \DateTime {
+    public function createdAt(): \DateTime
+    {
         return \DateTime::createFromFormat('Y-m-d H:i:s', $this->created_at);
     }
 
     public function delete(): bool
     {
-        if(!isset($this->id)) {
+        if (!isset($this->id)) {
             return false;
         }
 
         $stmt = DB::instance()->prepare("DELETE FROM {$this->table} WHERE ID=? LIMIT 1");
         $stmt->bind_param('s', $this->id);
 
-        return (bool) $stmt->execute();
+        return (bool)$stmt->execute();
     }
 }

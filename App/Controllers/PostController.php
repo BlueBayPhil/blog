@@ -19,12 +19,14 @@ class PostController extends Controller
     }
 
     public function create() {
-        $this->view = 'create';
+        $this->view = 'editor';
+        $this->set('form_action', '/post/store');
         $this->render();
     }
 
     public function store() {
         $post = new post($_POST);
+
         try {
             $post->save();
             header("Location: /home");
@@ -36,6 +38,8 @@ class PostController extends Controller
 
     public function edit() {
         $this->set('post', Post::find($_GET['post']));
+        $this->set('form_action', '/post/store');
+        $this->view = 'editor';
 
         $this->render('create');
     }
